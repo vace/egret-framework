@@ -2,7 +2,12 @@
 logs
 *.log
 npm-debug.log*
-
+.wing
+/libs
+/bin-debug
+/resource
+/template
+.DS_Store
 # Runtime data
 pids
 *.pid

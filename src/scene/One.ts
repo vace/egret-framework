@@ -6,6 +6,10 @@ class One extends v.Scene{
     create(){
         console.log('create')
         
+        var ememy = App.pool.produce(view.Enemy,'enemy type')
+        
+        App.pool.recycle(ememy)
+        
         this.addTextField({
             ref:'textfiled',
             text:'hehe',
@@ -16,6 +20,9 @@ class One extends v.Scene{
         }).addEventListener(egret.TouchEvent.TOUCH_TAP,(e)=>{
             App.state.state = 'two'
         },this)
+        
+        
+        this.addBitmapText('fonttest_fnt',{text:'hello 大家好,我是按钮',x:100,y:500})
     }
     reset(){
         var text = <egret.TextField>this.getRef('textfiled')

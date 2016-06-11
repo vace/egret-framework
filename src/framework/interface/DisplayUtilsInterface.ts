@@ -52,6 +52,16 @@ module v{
        textFlow?:egret.ITextElement[]
     }
     
+    export interface BitmapTextUtilsInterfae extends DisplayUtilsInterface{
+        font?:egret.BitmapFont,
+        letterSpacing?:number,
+        lineSpacing?:number,
+        smoothing?:number,
+        text?:string,
+        textAlign?:string,
+        verticalAlign?:string
+    }
+    
     export interface MoiveClipUtilInterface extends DisplayUtilsInterface{
         frameRate?:number,
         movieClipData?:egret.MovieClipData,

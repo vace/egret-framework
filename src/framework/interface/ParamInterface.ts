@@ -12,4 +12,10 @@ module v{
         retry?:number,
         thread?:number
     }
+    
+    export interface MakeMoiveClipInterface extends v.MoiveClipUtilInterface{
+        data:string,
+        texture:string,
+        animate:string
+    }
 }

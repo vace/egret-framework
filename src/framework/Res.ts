@@ -26,7 +26,7 @@ module v{
          */
         private _resourceConfig:resConfigInterface = {
             // loading 接管场景
-            loadingScene:null,
+            loadingScene:v.LoadingBase.key,
             // 当加载其他分组之前显示loading需要提前加载的选项,loading
             loadingGroup:'loading',
             // 配置文件路径(resource.json的路径)。

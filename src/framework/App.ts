@@ -17,4 +17,13 @@ class App{
     public static get res():v.Res{
         return v.Res.getInstance()
     }
+    
+    public static get pool():v.Pool{
+        return v.Pool.getInstance()
+    }
+    
+    
+    public static warn(msg){
+        console.warn(msg)
+    }
 }

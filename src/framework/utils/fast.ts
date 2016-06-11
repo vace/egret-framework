@@ -10,12 +10,21 @@ module v{
         /**
          * 快速从资源中创建bitmap
          */
-        static createBitmap(resName:string,scale9Grid:boolean=false):egret.Bitmap{
+        static createBitmap(resName:string,attrs?:v.DisplayUtilsInterface):egret.Bitmap{
             var texture = RES.getRes(resName)
+            
+            if (!texture){
+                App.warn(`bitmap:${resName} is not found in resourse`)
+            }
+            
             var bitmap = new egret.Bitmap
             bitmap.texture = texture
-            if(scale9Grid){
+            if(texture.scale9Grid){
                 bitmap.scale9Grid = texture.scale9Grid
+            }
+            
+            if (attrs){
+                utils.set(bitmap,attrs)
             }
             return bitmap
         }
@@ -30,14 +39,27 @@ module v{
             return v.utils.set(shape,attrs)
         }
         
+        static createBitmapText(fntName:string,attrs?:v.TextFieldUtilsInterface):egret.BitmapText{
+            var bitmaptext = new egret.BitmapText
+            var font = RES.getRes(fntName)
+            if (!font){
+                App.warn(`fnt:${fntName} is not found in resourse`)
+            }
+            bitmaptext.font = font
+            return utils.set(bitmaptext,attrs)
+        }
+        
         /**
          * 根据dataRes和textureName生成指定animate动画
          */
         static createMovieClip(dataResName:string,textureResName:string,animateName:string):egret.MovieClip{
             var cacheKey = `d:${dataResName}t:${textureResName}`
             if(!_movieClipDataCache[cacheKey]){
-                 var data = RES.getRes(dataResName)
+                var data = RES.getRes(dataResName)
                 var texture = RES.getRes(textureResName)
+                if (!texture || !data){
+                    App.warn(`movieClip:${dataResName} or ${textureResName} is not found in resourse`)
+                }
                 var movieFactory = new egret.MovieClipDataFactory(data,texture)
                 _movieClipDataCache[cacheKey] = movieFactory
             }

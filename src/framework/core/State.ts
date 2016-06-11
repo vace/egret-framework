@@ -1,4 +1,6 @@
 module v{
+    
+    // var _senceMaps = {}
     /**
      * 游戏状态管理机
      */
@@ -17,6 +19,8 @@ module v{
         private _currentKey:string
         constructor(){
             super()
+            // 注入默认的loading scene
+            this.register(v.LoadingBase)
         }
         
         get scene():v.Scene{

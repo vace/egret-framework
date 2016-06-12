@@ -19,16 +19,18 @@ class One extends v.Scene{
             touchEnabled:true
         }).addEventListener(egret.TouchEvent.TOUCH_TAP,(e)=>{
             App.state.state = 'two'
-        },this)
-        
+        },this)       
         
         this.addBitmapText('fonttest_fnt',{text:'hello 大家好,我是按钮',x:100,y:500})
+        
+        // 增加一个运行动画
+        this.setAniRef('textfiled').duration(1000).from({scaleX:2,scaleY:2,alpha:2})
     }
     reset(){
         var text = <egret.TextField>this.getRef('textfiled')
         text.text = 'no time is ' + egret.getTimer()
-        // text.text = '111'
         
+        this.getAni('textfiled').play()
         console.log('reset')
     }
     update(){

@@ -1,13 +1,24 @@
 module v{
+
+    /**
+     * 对象池
+     */
     export class Pool extends BaseInstance{
         
         constructor(){
             super()
         }
+
+        /**
+         * [_object_cache 对象缓存]
+         * @type {Object}
+         */
         _object_cache = {}
         
         /**
-         * 生成对象
+         * [produce 生产对象]
+         * @param {any}    Factory [对象构造函数]
+         * @param {[type]} ...args [对象参数]
          */
         public produce(Factory:any,...args){
             var key = Factory.key
@@ -39,7 +50,8 @@ module v{
         }
         
         /**
-         * 回收对象
+         * [recycle 回收对象]
+         * @param {PoolInterface} _class [已经初始化需要回收的对象]
          */
         public recycle(_class:PoolInterface){
             var key = _class.key,

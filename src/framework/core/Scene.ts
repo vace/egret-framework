@@ -1,14 +1,33 @@
 module v{
+
+    /**
+     * 场景基类,所有场景需要继承此基类
+     */
+
     export class Scene extends egret.DisplayObjectContainer implements v.SceneInterface{
         /**
          * 缓存的refs,缓存的ref必须是displayObject
          */
         protected _refs:SceneRefInterface = {}
+
+        /**
+         * [_animateRefs 缓存动画对象集合]
+         */
+        protected _animateRefs = {}
         
-        
+        /**
+         * [stageWidth 当前场景宽度]
+         * @type {number}
+         */
         stageWidth:number
+
+        /**
+         * [stageHeight 当前场景高度]
+         * @type {number}
+         */
         stageHeight:number
         
+
         constructor(){
             super()
             this.stageWidth = App.stage.stageWidth
@@ -55,8 +74,24 @@ module v{
             egret.warn(`ref [${refName}] is not existing`)
         }
         
-        tween(){
-            
+        setAni(refName:string,display:any):v.Animate{
+            var target = this.getRef(refName)
+            return (this._animateRefs[refName] =  v.Animate.get(target))
+        }
+        
+        getAni(refName):v.Animate{
+            return this._animateRefs[refName]
+        }
+        
+        setAniRef(refName):v.Animate{
+            return this.setAni(refName,this.getRef(refName))
+        }
+        
+        /**
+         * 新增一个tween对象
+         */
+        tween(target):egret.Tween{
+            return egret.Tween.get(target)
         }
         
         /**
@@ -65,9 +100,10 @@ module v{
         /**
          * 添加一个bitmap
          */
-        addBitmap(resName,attrs:v.DisplayUtilsInterface={}):egret.Bitmap{
+        addBitmap(resName,attrs:v.DisplayUtilsInterface={},to?:egret.DisplayObjectContainer | egret.Sprite):egret.Bitmap{
             var bitmap = v.fast.createBitmap(resName,attrs)
-            this.addChild(bitmap)
+            var target = to || this
+            target.addChild(bitmap)
             if(attrs.ref){
                 this.setRef(attrs.ref,bitmap)
             }
@@ -76,9 +112,10 @@ module v{
         /**
          * 添加一段文本
          */
-        addTextField(attrs:v.TextFieldUtilsInterface={}){
+        addTextField(attrs:v.TextFieldUtilsInterface={},to?:egret.DisplayObjectContainer | egret.Sprite){
             var text = v.fast.createTextField(attrs)
-            this.addChild(text)
+            var target = to || this
+            target.addChild(text)
             if(attrs.ref){
                 this.setRef(attrs.ref,text)
             }
@@ -88,9 +125,10 @@ module v{
         /**
          * 添加bitmap text 文本
          */
-        addBitmapText(fntName,attrs:v.BitmapTextUtilsInterfae={}){
+        addBitmapText(fntName,attrs:v.BitmapTextUtilsInterfae={},to?:egret.DisplayObjectContainer | egret.Sprite){
             var bitmapText = v.fast.createBitmapText(fntName,attrs)
-            this.addChild(bitmapText)
+            var target = to || this
+            target.addChild(bitmapText)
             if(attrs.ref){
                 this.setRef(attrs.ref,bitmapText)
             }
@@ -100,7 +138,7 @@ module v{
         /**
          * 创建一个movieClip影集
          */
-        addMovieClip(attrs:v.MakeMoiveClipInterface){
+        addMovieClip(attrs:v.MakeMoiveClipInterface,to?:egret.DisplayObjectContainer | egret.Sprite){
             var {data,texture,animate} = attrs
             var movie = v.fast.createMovieClip(data,texture,animate)
             
@@ -110,7 +148,9 @@ module v{
             delete attrs.animate
 
             v.utils.set(movie,attrs)
-            this.addChild(movie)
+            var target = to || this
+            target.addChild(movie)
+
             if(attrs.ref){
                 this.setRef(attrs.ref,movie)
             }
@@ -120,9 +160,10 @@ module v{
         /**
          * 新建一个Shape
          */
-        addShape(attrs:v.DisplayUtilsInterface = {}){
+        addShape(attrs:v.DisplayUtilsInterface = {},to?:egret.DisplayObjectContainer | egret.Sprite){
             var shape = v.fast.createShape(attrs)
-            this.addChild(shape)
+            var target = to || this
+            target.addChild(shape)
             if(attrs.ref){
                 this.setRef(attrs.ref,shape)
             }
@@ -130,12 +171,16 @@ module v{
         }
 
         /**
-         * 新建一个组
+         * [addGroup 在场景新增一个dispalyObject显示对象]
+         * @param         attrs [显示对象属性]
+         * @param         to    [显示对象父级]
+         * @return      [显示对象]
          */
-        addGroup(attrs:v.DisplayUtilsInterface = {}):egret.DisplayObjectContainer{
+        addGroup(attrs:v.DisplayUtilsInterface = {},to?:egret.DisplayObjectContainer | egret.Sprite):egret.DisplayObjectContainer{
             var container = new egret.DisplayObjectContainer
             v.utils.set(container,attrs)
-            this.addChild(container)
+            var target = to || this
+            target.addChild(container)
             if(attrs.ref){
                 this.setRef(attrs.ref,container)
             }
@@ -143,12 +188,16 @@ module v{
         }
         
         /**
-         * 新建 sprite
+         * [addSprite 在场景中新建一个Sprite显示对象]
+         * @param   attrs [显示对象属性]
+         * @param   to    [显示对象父级]
+         * @return  [增加的sprite实例对象]
          */
-        addSprite(attrs:v.DisplayUtilsInterface = {}):egret.DisplayObjectContainer{
+        addSprite(attrs:v.DisplayUtilsInterface = {},to?:egret.DisplayObjectContainer | egret.Sprite):egret.DisplayObjectContainer{
             var sprite = new egret.Sprite
             v.utils.set(sprite,attrs)
-            this.addChild(sprite)
+            var target = to || this
+            target.addChild(sprite)
             if(attrs.ref){
                 this.setRef(attrs.ref,sprite)
             }
@@ -161,7 +210,11 @@ module v{
          */
         
         /**
-         * 快速绑定事件,返回事件解绑器
+         * [on 快速绑定]
+         * @param {egret.DisplayObject} ele      [需要绑定的元素]
+         * @param {string}              type     [事件类型]
+         * @param {Function}            listener [监听函数]
+         * @return {Function}  [事件解绑]
          */
         on(ele:egret.DisplayObject,type:string,listener:Function){
             ele.addEventListener(type,listener,this,false)
@@ -171,7 +224,11 @@ module v{
         }
         
         /**
-         * 事件解绑,返回事件激活
+         * [off 快速解绑事件]
+         * @param {egret.DisplayObject} ele      [绑定元素]
+         * @param {string}              type     [事件类型]
+         * @param {Function}            listener [监听函数]
+         * @return {Function}           [事件重新绑定]
          */
         off(ele:egret.DisplayObject,type:string,listener:Function){
             ele.removeEventListener(type,listener,this,false)

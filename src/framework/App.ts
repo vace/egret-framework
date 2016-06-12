@@ -22,8 +22,19 @@ class App{
         return v.Pool.getInstance()
     }
     
+    public static get fast():v.fast{
+        return v.fast
+    }
+    
+    public static get utils(){
+        return v.utils
+    }
     
     public static warn(msg){
         console.warn(msg)
+    }
+    
+    public static tween(target):v.Animate{
+        return v.Animate.get(target)
     }
 }
